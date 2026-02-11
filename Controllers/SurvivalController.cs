@@ -263,7 +263,7 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
         public async Task<dynamic> createMapRun([FromBody] SurvivalRunDTO request)
         {
             var game = db.Game.OrderByDescending(x => x.Id).FirstOrDefault(x => x.GameId == request.GameId);
-            var accountIds = request.AccountIds.Where(x => x > 0).ToArray();
+            var accountIds = Enumerable.Range(0, 10).Select(x => request.AccountIds.ElementAtOrDefault(x) > 0 ? request.AccountIds.ElementAt(x) : (int?)null).ToArray();
 
             var newRun = new AccountSurvivalMapRun
             {
@@ -299,7 +299,7 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
             var run = await customDb.AccountSurvivalMapRun.FirstOrDefaultAsync(s => s.Id == runId);
             if (run == null) return NotFound();
 
-            var accountIds = request.AccountIds.Where(x => x > 0).ToArray();
+            var accountIds = Enumerable.Range(0, 10).Select(x => request.AccountIds.ElementAtOrDefault(x) > 0 ? request.AccountIds.ElementAt(x) : (int?)null).ToArray();
 
             run.GameId = request.GameId;
             run.PlayerCountAtStart = request.PlayerCountAtStart;
