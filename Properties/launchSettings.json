@@ -1,0 +1,21 @@
+{
+  "profiles": {
+    "horizon-deadlocked-middleware-plugin": {
+      "commandName": "Project"
+    },
+    "Horizon.Database.Middleware": {
+      "commandName": "Executable",
+      "executablePath": ".\\Horizon.Database.exe",
+      "workingDirectory": "..\\horizon-server-database-middleware\\Horizon.Database\\bin\\Debug\\net9.0",
+      "environmentVariables": {
+        "HORIZON_DB_SERVER": "127.0.0.1,1433",
+        "HORIZON_DB_NAME": "",
+        "HORIZON_DB_USER": "",
+        "HORIZON_MSSQL_SA_PASSWORD": "",
+        "HORIZON_MIDDLEWARE_USER": "",
+        "HORIZON_MIDDLEWARE_PASSWORD": "",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
