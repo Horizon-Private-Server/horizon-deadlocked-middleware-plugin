@@ -7,10 +7,11 @@ COPY . /src
 WORKDIR /src/middleware/Horizon.Database/
 RUN dotnet publish -c Release -o /middleware
 
-RUN cp /middleware/*.dll /src/
+RUN cp /middleware/*.dll /src/Horizon.Middleware.Plugin.Deadlocked/
 
 #====== Build Plugin
-WORKDIR /src/
+WORKDIR /src/Horizon.Middleware.Plugin.Deadlocked
 RUN dotnet publish -c Release -o /out/plugin
+RUN rm -rf /out/plugin/runtimes
 
 CMD "/src/entrypoint.sh"
