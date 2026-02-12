@@ -6,7 +6,7 @@
     "Horizon.Database.Middleware": {
       "commandName": "Executable",
       "executablePath": ".\\Horizon.Database.exe",
-      "workingDirectory": "..\\horizon-server-database-middleware\\Horizon.Database\\bin\\Debug\\net9.0",
+      "workingDirectory": "..\\..\\horizon-server-database-middleware\\Horizon.Database\\bin\\Debug\\net9.0",
       "environmentVariables": {
         "HORIZON_DB_SERVER": "127.0.0.1,1433",
         "HORIZON_DB_NAME": "",

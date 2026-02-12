@@ -7,7 +7,7 @@ sudo rm -rf out/plugin
 mkdir -p out/plugin
 mkdir -p middleware
 
-cp ../horizon-server server -r
+cp ../horizon-server-database-middleware middleware -r
 
 docker build . -t deadlocked_middleware_plugin
 

@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <Reference Include="Horizon.Database">
-      <HintPath>..\horizon-server-database-middleware\Horizon.Database\bin\Debug\net9.0\Horizon.Database.dll</HintPath>
+      <HintPath>..\..\horizon-server-database-middleware\Horizon.Database\bin\Debug\net9.0\Horizon.Database.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
