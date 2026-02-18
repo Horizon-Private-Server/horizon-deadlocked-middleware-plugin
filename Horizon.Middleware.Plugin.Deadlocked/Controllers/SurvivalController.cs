@@ -52,27 +52,31 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
         [HttpGet, Route("getAccountStats")]
         public async Task<dynamic> getAccountStats(int AccountId)
         {
+            if (AccountId == 0)
+                return BadRequest("Missing AccountId");
+
             var stat = await (from s in customDb.AccountSurvivalStat
-                               where s.AccountId == AccountId
-                               select new SurvivalAccountStatDTO()
-                               {
-                                   AccountId = s.AccountId,
-                                   GamesPlayed = s.GamesPlayed,
-                                   TimePlayedMs = s.TimePlayedMs,
-                                   Kills = s.Kills,
-                                   Deaths = s.Deaths,
-                                   Revives = s.Revives,
-                                   TimesRevived = s.TimesRevived,
-                                   WrenchKills = s.WrenchKills,
-                                   DualViperKills = s.DualViperKills,
-                                   MagmaCannonKills = s.MagmaCannonKills,
-                                   ArbiterKills = s.ArbiterKills,
-                                   FusionRifleKills = s.FusionRifleKills,
-                                   MineLauncherKills = s.MineLauncherKills,
-                                   B6Kills = s.B6Kills,
-                                   HoloshieldKills = s.HoloshieldKills,
-                                   ScorpionFlailKills = s.ScorpionFlailKills
-                               }).FirstOrDefaultAsync() ?? new SurvivalAccountStatDTO();
+                              where s.AccountId == AccountId
+                              select new SurvivalAccountStatDTO()
+                              {
+                                  AccountId = s.AccountId,
+                                  GamesPlayed = s.GamesPlayed,
+                                  TimePlayedMs = s.TimePlayedMs,
+                                  Kills = s.Kills,
+                                  Deaths = s.Deaths,
+                                  Revives = s.Revives,
+                                  TimesRevived = s.TimesRevived,
+                                  WrenchKills = s.WrenchKills,
+                                  DualViperKills = s.DualViperKills,
+                                  MagmaCannonKills = s.MagmaCannonKills,
+                                  ArbiterKills = s.ArbiterKills,
+                                  FusionRifleKills = s.FusionRifleKills,
+                                  MineLauncherKills = s.MineLauncherKills,
+                                  B6Kills = s.B6Kills,
+                                  HoloshieldKills = s.HoloshieldKills,
+                                  ScorpionFlailKills = s.ScorpionFlailKills
+                              }).FirstOrDefaultAsync()
+                              ?? new SurvivalAccountStatDTO() { AccountId = AccountId };
 
             var completionStat = (await customDb.SurvivalCompletionLeaderboardRow.FromSqlRaw("SELECT * FROM [dbo].[GetSurvivalCompletionLeaderboard]() WHERE account_id = @p0", AccountId)
                 .ToListAsync())
@@ -91,6 +95,9 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
         [HttpPost, Route("updateAccountStats")]
         public async Task<dynamic> updateAccountStats([FromBody] SurvivalAccountStatDTO request)
         {
+            if (request.AccountId == 0)
+                return BadRequest("Missing AccountId");
+
             var stats = await customDb.AccountSurvivalStat.FirstOrDefaultAsync(s => s.AccountId == request.AccountId);
             if (stats == null)
             {
@@ -147,6 +154,12 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
         [HttpGet, Route("getAccountMapStats")]
         public async Task<dynamic> getAccountMapStats(int AccountId, string MapFilename)
         {
+            if (AccountId == 0)
+                return BadRequest("Missing AccountId");
+
+            if (string.IsNullOrEmpty(MapFilename))
+                return BadRequest("Missing MapFilename");
+
             var stat = await (from s in customDb.AccountSurvivalMapStat
                               where s.AccountId == AccountId && s.MapFilename == MapFilename
                               select new SurvivalAccountMapStatDTO()
@@ -157,7 +170,8 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
                                   Rank = s.Rank,
                                   Prestige = s.Prestige,
                                   PercentCompleted = s.PercentCompleted,
-                              }).FirstOrDefaultAsync() ?? new SurvivalAccountMapStatDTO();
+                              }).FirstOrDefaultAsync()
+                              ?? new SurvivalAccountMapStatDTO() { AccountId = AccountId, MapFilename = MapFilename };
 
             var gambits = await (from g in customDb.AccountSurvivalMapGambitStat
                                  where g.AccountId == AccountId && g.MapFilename == MapFilename
@@ -185,6 +199,12 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
         [HttpPost, Route("updateAccountMapStats")]
         public async Task<dynamic> updateAccountMapStats([FromBody] SurvivalAccountMapStatDTO request)
         {
+            if (request.AccountId == 0)
+                return BadRequest("Missing AccountId");
+
+            if (string.IsNullOrEmpty(request.MapFilename))
+                return BadRequest("Missing MapFilename");
+
             var stats = await customDb.AccountSurvivalMapStat.FirstOrDefaultAsync(s => s.AccountId == request.AccountId && s.MapFilename == request.MapFilename);
             if (stats == null)
             {
@@ -220,6 +240,15 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
         [HttpPost, Route("updateAccountMapGambitStats")]
         public async Task<dynamic> updateAccountMapGambitStats([FromBody] SurvivalAccountMapGambitStatPostDTO statData)
         {
+            if (statData.AccountId == 0)
+                return BadRequest("Missing AccountId");
+
+            if (string.IsNullOrEmpty(statData.MapFilename))
+                return BadRequest("Missing MapFilename");
+
+            if (string.IsNullOrEmpty(statData.Gambit))
+                return BadRequest("Missing gambit");
+
             var existingStat = await customDb.AccountSurvivalMapGambitStat
                 .FirstOrDefaultAsync(s => s.AccountId == statData.AccountId &&
                                          s.MapFilename == statData.MapFilename &&
@@ -262,6 +291,9 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
         [HttpPost, Route("createMapRun")]
         public async Task<dynamic> createMapRun([FromBody] SurvivalRunDTO request)
         {
+            if (string.IsNullOrEmpty(request.MapFilename))
+                return BadRequest("Missing MapFilename");
+
             var game = db.Game.OrderByDescending(x => x.Id).FirstOrDefault(x => x.GameId == request.GameId);
             var accountIds = Enumerable.Range(0, 10).Select(x => request.AccountIds.ElementAtOrDefault(x) > 0 ? request.AccountIds.ElementAt(x) : (int?)null).ToArray();
 
@@ -296,6 +328,9 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Controllers
         [HttpPost, Route("updateMapRun/{runId}")]
         public async Task<dynamic> updateMapRun(int runId, [FromBody] SurvivalRunDTO request)
         {
+            if (string.IsNullOrEmpty(request.MapFilename))
+                return BadRequest("Missing MapFilename");
+
             var run = await customDb.AccountSurvivalMapRun.FirstOrDefaultAsync(s => s.Id == runId);
             if (run == null) return NotFound();
 
