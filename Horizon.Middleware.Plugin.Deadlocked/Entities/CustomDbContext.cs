@@ -32,6 +32,10 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Entities
         public virtual DbSet<SurvivalMapLeaderboardRow> SurvivalMapLeaderboardRow { get; set; }
         public virtual DbSet<SurvivalRunLeaderboardRow> SurvivalRunLeaderboardRow { get; set; }
 
+        public virtual DbSet<DimForgeCgmMaps> DimForgeCgmMaps { get; set; }
+        public virtual DbSet<ForgeCgmMapAccountStat> ForgeCgmMapAccountStat { get; set; }
+        public virtual DbSet<ForgeCgmMapAggregatedAccountStat> ForgeCgmMapAggregatedAccountStats { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DimSurvivalMaps>(entity =>
@@ -197,6 +201,65 @@ namespace Horizon.Middleware.Plugin.Deadlocked.Entities
                 entity.Property(e => e.Gambit).HasColumnName("gambit");
                 entity.Property(e => e.Value).HasColumnName("value");
                 entity.Property(e => e.LeaderboardRank).HasColumnName("leaderboard_rank");
+            });
+
+            modelBuilder.Entity<DimForgeCgmMaps>(entity =>
+            {
+                entity.ToTable("dim_forge_cgm_maps", "KEYS").HasKey(x => x.MapFilename);
+
+                entity.Property(e => e.MapFilename).HasColumnName("map_filename");
+                entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.SharedRankCode).HasColumnName("shared_rank_code");
+                entity.Property(e => e.Metadata).HasColumnName("metadata");
+                entity.Property(e => e.ModifiedDt).HasColumnName("modified_dt");
+            });
+
+            modelBuilder.Entity<ForgeCgmMapAccountStat>(entity =>
+            {
+                entity.ToTable("account_forge_cgm_map_stat", "STATS");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.AccountId).HasColumnName("account_id");
+                entity.Property(e => e.MapFilename).HasColumnName("map_filename");
+
+                entity.Property(e => e.Rank).HasColumnName("rank");
+                entity.Property(e => e.Wins).HasColumnName("wins");
+                entity.Property(e => e.Losses).HasColumnName("losses");
+                entity.Property(e => e.GamesPlayed).HasColumnName("games_played");
+                entity.Property(e => e.TimePlayedMs).HasColumnName("time_played_ms");
+
+                entity.Property(e => e.TrackedStat1).HasColumnName("tracked_stat_1");
+                entity.Property(e => e.TrackedStat2).HasColumnName("tracked_stat_2");
+                entity.Property(e => e.TrackedStat3).HasColumnName("tracked_stat_3");
+                entity.Property(e => e.TrackedStat4).HasColumnName("tracked_stat_4");
+                entity.Property(e => e.TrackedStat5).HasColumnName("tracked_stat_5");
+                entity.Property(e => e.TrackedStat6).HasColumnName("tracked_stat_6");
+                entity.Property(e => e.TrackedStat7).HasColumnName("tracked_stat_7");
+                entity.Property(e => e.TrackedStat8).HasColumnName("tracked_stat_8");
+
+                entity.Property(e => e.ModifiedDt).HasColumnName("modified_dt");
+            });
+
+            modelBuilder.Entity<ForgeCgmMapAggregatedAccountStat>(entity =>
+            {
+                entity.HasNoKey().ToView(null);
+
+                entity.Property(e => e.AccountId).HasColumnName("account_id");
+                entity.Property(e => e.Wins).HasColumnName("wins");
+                entity.Property(e => e.Losses).HasColumnName("losses");
+                entity.Property(e => e.GamesPlayed).HasColumnName("games_played");
+                entity.Property(e => e.TimePlayedMs).HasColumnName("time_played_ms");
+                entity.Property(e => e.Rank).HasColumnName("rank");
+                entity.Property(e => e.Ranking).HasColumnName("ranking");
+
+                entity.Property(e => e.TrackedStat1).HasColumnName("tracked_stat_1");
+                entity.Property(e => e.TrackedStat2).HasColumnName("tracked_stat_2");
+                entity.Property(e => e.TrackedStat3).HasColumnName("tracked_stat_3");
+                entity.Property(e => e.TrackedStat4).HasColumnName("tracked_stat_4");
+                entity.Property(e => e.TrackedStat5).HasColumnName("tracked_stat_5");
+                entity.Property(e => e.TrackedStat6).HasColumnName("tracked_stat_6");
+                entity.Property(e => e.TrackedStat7).HasColumnName("tracked_stat_7");
+                entity.Property(e => e.TrackedStat8).HasColumnName("tracked_stat_8");
             });
 
             OnModelCreatingPartial(modelBuilder);
